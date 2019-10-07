@@ -2,12 +2,8 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-}
-
 .App-header {
-  background-color: #282c34;
+  background-color: teal;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -17,6 +13,18 @@
   color: white;
 }
 
-.App-link {
-  color: #09d3ac;
+.hot {
+  color: rgb(231, 44, 44);
+}
+
+.planet-details {
+  flex-wrap: wrap;
+}
+
+.resident {
+  margin: 5px;
+}
+
+.load-button {
+  margin: 2em !important; 
 }
