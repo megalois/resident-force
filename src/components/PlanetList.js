@@ -1,5 +1,6 @@
 import React from 'react';
 import Container from '@material-ui/core/Container';
+import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
@@ -8,6 +9,8 @@ import {
   PLANET_CLICKED
 } from '../constants.js';
 import Planet from './Planet';
+import { PLANETS_PER_PAGE } from '../constants.js';
+
 
 
 export const fetchButtonClicked = (nextPage) => ({
@@ -21,7 +24,9 @@ export const planetClicked = (name) => ({
 
 const mapStateToProps = state => {
   return {
-    planets: state.planets.pages[state.planets.currentPage] || []
+    planets: state.planets.pages[state.planets.currentPage] || [],
+    currentPage: state.planets.currentPage,
+    count: state.planets.count,
   }
 }
 const mapDispatchToProps = dispatch => ({
@@ -41,9 +46,27 @@ const PlanetList = (props) =>
       variant="contained"
       color="primary"
       className="load-button"
-      onClick={props.fetchButtonClicked(1)}>
+      onClick={props.fetchButtonClicked(0)}>
       Load Planets
-</Button>
+    </Button>
+    <Box>
+      <Button
+        variant="contained"
+        color="primary"
+        className="load-button"
+        disabled={props.currentPage === 0}
+        onClick={props.fetchButtonClicked(props.currentPage - 1)}>
+        Previous
+    </Button>
+      <Button
+        variant="contained"
+        color="primary"
+        className="load-button"
+        disabled={(props.currentPage + 1) === Math.ceil(props.count / PLANETS_PER_PAGE)}
+        onClick={props.fetchButtonClicked(props.currentPage + 1)}>
+        Next
+    </Button>
+    </Box>
     {props.planets.map((planet, i) =>
       <Planet key={planet.name}
         onChange={props.planetClicked(planet.name)}

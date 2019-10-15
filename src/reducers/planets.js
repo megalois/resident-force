@@ -13,9 +13,10 @@ pages: [
 ]
 */
 
-export default (state = { pages: [], currentPage: 0 }, action) => {
+export default (state = { pages: [], currentPage: 0, count: 65 }, action) => {  
     switch (action.type) {
         case PLANETS_RECEIVED:
+            console.log(action.count);
             const numberOfPages = Math.ceil(action.count / PLANETS_PER_PAGE);
             const emptyPages = new Array(numberOfPages).fill([]);
             const newPages = emptyPages.map((page, i) => {
@@ -31,6 +32,7 @@ export default (state = { pages: [], currentPage: 0 }, action) => {
                 ...state,
                 pages: newPages,
                 currentPage: action.nextPage,
+                count: action.acount || state.count
             };
         case RESIDENTS_RECEIVED:
             return {

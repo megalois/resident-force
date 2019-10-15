@@ -15,8 +15,8 @@ function* fetchPlanets(action) {
     let planetPage;
     let json;
     let count;
-    if (state.pages && state.pages[action.nextPage].length === 0) {
-        // Page already stored
+    if (state.planets.pages[action.nextPage] && state.planets.pages[action.nextPage].length !== 0) {
+        // Page already stored. Just update current page.
         updatePage = false;
     } else {
         json = yield axios.get(SWAPI_URL + 'planets/?page=' + (action.nextPage + 1));
@@ -28,7 +28,7 @@ function* fetchPlanets(action) {
         type: PLANETS_RECEIVED,
         updatePage,
         planetPage,
-        count,
+        count: count || state.planets.count,
         nextPage: action.nextPage
     });
 }
