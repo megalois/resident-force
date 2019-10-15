@@ -9,17 +9,37 @@ import {
 import axios from 'axios';
 import store from '../store';
 
-function* fetchPlanets() {
-    const json = yield axios.get(SWAPI_URL + 'planets');
-    yield put({ type: PLANETS_RECEIVED, json: json.data.results, });
+function* fetchPlanets(action) {
+    const state = store.getState();
+    let updatePage;
+    let planetPage;
+    let json;
+    let count;
+    if (state.pages && state.pages[action.nextPage].length === 0) {
+        // Page already stored
+        updatePage = false;
+    } else {
+        json = yield axios.get(SWAPI_URL + 'planets/?page=' + (action.nextPage + 1));
+        planetPage = json.data.results;
+        count = json.data.count;
+        updatePage = true;
+    }
+    yield put({
+        type: PLANETS_RECEIVED,
+        updatePage,
+        planetPage,
+        count,
+        nextPage: action.nextPage
+    });
 }
 function* fetchClickedWatcher() {
     yield takeLatest(FETCH_BUTTON_CLICKED, fetchPlanets)
 }
 
 function* fetchResidents(action) {
-    let state = store.getState();
-    let planet = state.planets.list.find((planet) => planet.name === action.name);
+    const state = store.getState();
+    const currentPage = state.planets.currentPage;
+    let planet = state.planets.pages[currentPage].find((planet) => planet.name === action.name);
     if (planet.residentsInfo) {
         // Resident information is already stored
         return;
@@ -28,7 +48,7 @@ function* fetchResidents(action) {
         planet.residents.map(residentUrl => axios.get(residentUrl))
     );
     const opened = {
-        name: planet.name,
+        name: action.name,
         residents
     }
     yield put({ type: RESIDENTS_RECEIVED, json: opened })
